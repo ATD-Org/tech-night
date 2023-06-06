@@ -33,11 +33,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: dotnet build
-        run: dotnet build --configuration Release
+      - name: Build Web App
+        run: dotnet build ./TechNight-WebApp -c Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
+      - name: Publish Web App
+        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
