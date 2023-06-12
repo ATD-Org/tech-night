@@ -33,12 +33,6 @@ param linuxFxVersion string = 'DOTNETCORE|6.0'
 @description('App Region')
 param location string = resourceGroup().location // Location for all resources
 
-@description('External Git repo (optional)')
-param repositoryUrl string = 'https://github.com/ATD-Org/tech-night'
-
-@description('Default branch for code to be deployed')
-param branch string = 'develop'
-
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: '${envPrefix}-AppServicePlan-${webAppName}'
   location: location
@@ -59,14 +53,5 @@ resource webApp 'Microsoft.Web/sites@2020-06-01' = {
     siteConfig: {
       linuxFxVersion: linuxFxVersion
     }
-  }
-}
-
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
-  name: '${webApp.name}/web'
-  properties: {
-    repoUrl: repositoryUrl
-    branch: branch
-    isManualIntegration: true
   }
 }

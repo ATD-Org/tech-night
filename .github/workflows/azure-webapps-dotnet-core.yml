@@ -39,13 +39,19 @@ jobs:
       - name: Publish Web App
         run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
 
-      - name: Upload artifact for deployment job
+      - name: Upload application's files for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: | 
-            ${{ env.DOTNET_ROOT }}/technight-webapp
-            arm-templates/webapp/azuredeploy.bicep
+          path: ${{ env.DOTNET_ROOT }}/technight-webapp
+          if-no-files-found: error
+
+      - name: Upload Bicep template for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: arm-templates/webapp/azuredeploy.bicep
+          if-no-files-found: error
 
   dev:
     permissions:
@@ -70,8 +76,9 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
-        resourceGroupName: "technight-dev-rg"
-        template: ./arm-templates/webapp/azuredeploy.bicep
+        resourceGroupName: 'technight-dev-rg'
+        deploymentMode: 'Incremental'
+        template: '/arm-templates/webapp/azuredeploy.bicep'
         parameters: > 
           envPrefix = DEV 
           webAppName = TechNight-WebApp
