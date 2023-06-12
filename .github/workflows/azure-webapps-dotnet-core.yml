@@ -80,8 +80,8 @@ jobs:
         deploymentMode: 'Incremental'
         template: 'azuredeploy.bicep'
         parameters: > 
-          envPrefix = DEV 
-          webAppName = TechNight-WebApp
+          envPrefix=DEV 
+          webAppName=TechNight-WebApp
         failOnStdErr: false
 
 #    - name: Deploy to Azure Web App
