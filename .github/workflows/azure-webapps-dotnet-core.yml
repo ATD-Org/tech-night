@@ -82,6 +82,7 @@ jobs:
         parameters: > 
           envPrefix=DEV 
           webAppName=TechNight-WebApp
+          location=canadacentral
         failOnStdErr: false
 
 #    - name: Deploy to Azure Web App
