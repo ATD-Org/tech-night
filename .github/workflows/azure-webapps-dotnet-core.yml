@@ -78,7 +78,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
         resourceGroupName: 'technight-dev-rg'
         deploymentMode: 'Incremental'
-        template: '/arm-templates/webapp/azuredeploy.bicep'
+        template: 'azuredeploy.bicep'
         parameters: > 
           envPrefix = DEV 
           webAppName = TechNight-WebApp
