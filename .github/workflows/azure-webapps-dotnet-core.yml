@@ -40,13 +40,13 @@ jobs:
         run: dotnet build ./TechNight-WebApp -c Release
 
       - name: Publish Web App
-        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/technight-webapp
+        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
 
       - name: Upload application's files for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/technight-webapp
+          path: ${{ env.DOTNET_ROOT }}/technight-webapp
           if-no-files-found: error
 
       - name: Upload Bicep template for deployment job
