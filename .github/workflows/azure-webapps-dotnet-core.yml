@@ -69,6 +69,7 @@ jobs:
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
+      id: download
       with:
         name: artifacts
 
@@ -96,7 +97,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.envPrefix }}-${{ env.AZURE_WEBAPP_NAME }}
-        package: 'artifacts'
+        package: ${{steps.download.outputs.download-path}}
 
     - name: Log out of Azure
       run: az logout
