@@ -141,7 +141,7 @@ jobs:
         parameters: > 
           envPrefix=${{ env.envPrefix }} 
           webAppName=${{ env.AZURE_WEBAPP_NAME }}
-          sku='B1'
+          sku=B1
         failOnStdErr: false
 
     # Deploy to Azure Web apps
