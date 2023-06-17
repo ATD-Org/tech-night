@@ -1,7 +1,10 @@
 name: TechNight-WebApp-CICD
 
 env:
-  AZURE_WEBAPP_NAME: technight-webapp    # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: technight-webapp
+  AZURE_WEBAPP_LOCATION: canadacentral
+  AZURE_WEBAPP_RG: TN-RG
+
   AZURE_WEBAPP_PACKAGE_PATH: '.'         # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0'                  # set this to the .NET Core version to use
 
@@ -37,13 +40,13 @@ jobs:
         run: dotnet build ./TechNight-WebApp -c Release
 
       - name: Publish Web App
-        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
+        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/technight-webapp
 
       - name: Upload application's files for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: ${{ env.DOTNET_ROOT }}/technight-webapp
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/technight-webapp
           if-no-files-found: error
 
       - name: Upload Bicep template for deployment job
@@ -67,28 +70,30 @@ jobs:
         name: artifacts
 
     # Log into Azure
-    - uses: azure/login@v1
+    - name: Log into Azure
+      uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     # Deploy Bicep file
-    - name: Deploy Bicep Template
+    - name: Deploy Bicep Template (Web App Infra)
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
-        resourceGroupName: 'technight-dev-rg'
+        resourceGroupName: 'DEV-${{env.AZURE_WEBAPP_RG}}'
         deploymentMode: 'Incremental'
         template: 'azuredeploy.bicep'
         parameters: > 
           envPrefix=DEV 
-          webAppName=TechNight-WebApp
-          location=canadacentral
+          webAppName=${{ env.AZURE_WEBAPP_NAME }}
         failOnStdErr: false
 
-#    - name: Deploy to Azure Web App
-#      id: deploy-to-webapp
-#      uses: azure/webapps-deploy@v2
-#      with:
-#        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-#        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-#        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    # Deploy to Azure Web apps
+    - name: 'Deploy Web App'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+        package: 'artifacts'
+
+    - name: Log out of Azure
+      run: az logout
