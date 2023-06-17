@@ -1,12 +1,17 @@
+###############################################################################
+# Author: Alain Tran-Dang
+# Name: TechNight-WebApp-CICD (Workflow)
+#
+# Workflow used to package, deploy, and configure the TechNight-WebApp
+###############################################################################
+
 name: TechNight-WebApp-CICD
 
 env:
   AZURE_WEBAPP_NAME: technight-webapp
   AZURE_WEBAPP_LOCATION: canadacentral
   AZURE_WEBAPP_RG: TN-RG
-
-  AZURE_WEBAPP_PACKAGE_PATH: '.'         # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0'                  # set this to the .NET Core version to use
+  DOTNET_VERSION: '6.0'
 
 on:
   push:
@@ -84,7 +89,53 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
-        resourceGroupName: 'DEV-${{env.AZURE_WEBAPP_RG}}'
+        resourceGroupName: '${{ env.envPrefix }}-${{env.AZURE_WEBAPP_RG}}'
+        deploymentMode: 'Incremental'
+        template: 'azuredeploy.bicep'
+        parameters: > 
+          envPrefix=${{ env.envPrefix }} 
+          webAppName=${{ env.AZURE_WEBAPP_NAME }}
+        failOnStdErr: false
+
+    # Deploy to Azure Web apps
+    - name: 'Deploy Web App'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.envPrefix }}-${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{steps.download.outputs.download-path}}
+
+    - name: Log out of Azure
+      run: az logout
+
+  prd:
+    permissions:
+        contents: none
+    runs-on: ubuntu-latest
+    needs: dev
+    environment: 'PRODUCTION'
+
+    env:
+      envPrefix: PRD
+
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      id: download
+      with:
+        name: artifacts
+
+    # Log into Azure
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Deploy Bicep file
+    - name: Deploy Bicep Template (Web App Infra)
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+        resourceGroupName: '${{ env.envPrefix }}-${{env.AZURE_WEBAPP_RG}}'
         deploymentMode: 'Incremental'
         template: 'azuredeploy.bicep'
         parameters: > 

@@ -1,0 +1,40 @@
+###############################################################################
+# Author: Alain Tran-Dang
+# Name: webapp-deploy
+#
+# This reusable workflow defines the steps required to deploy an Azure Web App
+# It is intended to be used by all Azure Web Apps workflows.
+###############################################################################
+
+name: webapp-deploy
+
+on: 
+  workflow_call:
+    inputs:
+      ENVIRONMENT_PREFIX:
+        required: true
+        type: string
+      ENVIRONMENT:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT}}
+
+    env:
+      envPrefix: ${{ inputs.ENVIRONMENT_PREFIX }}
+
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      id: download
+      with:
+        name: artifacts
+
+    # Log into Azure
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
