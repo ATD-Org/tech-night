@@ -63,6 +63,9 @@ jobs:
     needs: build
     environment: 'DEVELOPMENT'
 
+    env:
+      envPrefix: DEV
+
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
@@ -84,7 +87,7 @@ jobs:
         deploymentMode: 'Incremental'
         template: 'azuredeploy.bicep'
         parameters: > 
-          envPrefix=DEV 
+          envPrefix=${{ env.envPrefix }} 
           webAppName=${{ env.AZURE_WEBAPP_NAME }}
         failOnStdErr: false
 
@@ -92,7 +95,7 @@ jobs:
     - name: 'Deploy Web App'
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+        app-name: ${{ env.envPrefix }}-${{ env.AZURE_WEBAPP_NAME }}
         package: 'artifacts'
 
     - name: Log out of Azure
