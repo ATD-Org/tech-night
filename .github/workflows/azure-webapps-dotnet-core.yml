@@ -35,8 +35,8 @@ jobs:
       - name: Set variables to be passed to the reusable workflow
         id: setEnvVariables
         run: |
-          echo "AZURE_WEBAPP_NAME='technight-webapp'" >> $GITHUB_OUTPUT
-          echo "RESOURCE_GROUP='TN-RG'"               >> $GITHUB_OUTPUT
+          echo "AZURE_WEBAPP_NAME=technight-webapp" >> $GITHUB_OUTPUT
+          echo "RESOURCE_GROUP=TN-RG"               >> $GITHUB_OUTPUT
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
