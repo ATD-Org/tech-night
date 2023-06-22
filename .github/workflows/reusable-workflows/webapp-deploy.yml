@@ -17,6 +17,23 @@ on:
       ENVIRONMENT:
         required: true
         type: string
+      AZURE_WEBAPP_NAME:
+        required: true
+        type: string
+      AZURE_WEBAPP_SKU:
+        type: string
+      AZURE_WEBAPP_LINUXFXVERSION:
+        type: string
+      LOCATION:
+        type: string
+      RESOURCE_GROUP:
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+      AZURE_SUBSCRIPTIONID:
+        required: true
 
 jobs:
   deploy:
@@ -38,3 +55,29 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Deploy Bicep file
+    - name: Deploy Bicep Template (Web App Infra)
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+        resourceGroupName: '${{ env.envPrefix }}-${{env.AZURE_WEBAPP_RG}}'
+        deploymentMode: 'Incremental'
+        template: 'azuredeploy.bicep'
+        parameters: > 
+          envPrefix=${{ inputs.ENVIRONMENT_PREFIX }} 
+          webAppName=${{ inputs.AZURE_WEBAPP_NAME }}
+          sku=${{ inputs.AZURE_WEBAPP_SKU }}
+          linuxFxVersion=${{ inputs.AZURE_WEBAPP_LINUXFXVERSION }}
+          location=${{ inputs.LOCATION }}
+        failOnStdErr: false
+
+    # Deploy to Azure Web apps
+    - name: 'Deploy Web App'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.ENVIRONMENT_PREFIX }}-${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{steps.download.outputs.download-path}}
+
+    - name: Log out of Azure
+      run: az logout
