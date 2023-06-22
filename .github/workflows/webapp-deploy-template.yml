@@ -1,12 +1,12 @@
 ###############################################################################
 # Author: Alain Tran-Dang
-# Name: webapp-deploy
+# Name: webapp-deploy-template
 #
 # This reusable workflow defines the steps required to deploy an Azure Web App
 # It is intended to be used by all Azure Web Apps workflows.
 ###############################################################################
 
-name: webapp-deploy
+name: webapp-deploy-template
 
 on: 
   workflow_call:
@@ -61,7 +61,7 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
-        resourceGroupName: '${{ env.envPrefix }}-${{env.RESOURCE_GROUP}}'
+        resourceGroupName: '${{ inputs.ENVIRONMENT_PREFIX }}-${{inputs.RESOURCE_GROUP}}'
         deploymentMode: 'Incremental'
         template: 'azuredeploy.bicep'
         parameters: > 
@@ -76,7 +76,7 @@ jobs:
     - name: 'Deploy Web App'
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.ENVIRONMENT_PREFIX }}-${{ env.AZURE_WEBAPP_NAME }}
+        app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
 
     - name: Log out of Azure
