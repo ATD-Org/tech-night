@@ -22,10 +22,14 @@ on:
         type: string
       AZURE_WEBAPP_SKU:
         type: string
+        default: F1
       AZURE_WEBAPP_LINUXFXVERSION:
         type: string
+        default: DOTNETCORE|6.0 
       LOCATION:
         type: string
+        required: true
+        default: canadacentral
       RESOURCE_GROUP:
         required: true
         type: string
