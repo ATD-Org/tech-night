@@ -56,7 +56,8 @@ jobs:
       - name: Build Web App
         run: dotnet build ./My-WebAPI/WebAPI -c Release
 
-        #TODO: run unit tests on the web app
+      - name: Run Unit Tests
+        run: dotnet test ./My-WebAPI/WebAPI.Tests -c Release
 
       - name: Publish Web App
         run: dotnet publish ./My-WebAPI/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
