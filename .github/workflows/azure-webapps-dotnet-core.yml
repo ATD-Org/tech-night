@@ -12,7 +12,9 @@ env:
 
 on:
   push:
-    branches: [ "develop", "feature/gh-action-workflow" ]
+    branches: [ "develop", "feature/add-webapi" ]
+    paths:
+      - 'My-WebAPI/**'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +37,7 @@ jobs:
       - name: Set variables to be passed to the reusable workflow
         id: setEnvVariables
         run: |
-          echo "AZURE_WEBAPP_NAME=technight-webapp" >> "$GITHUB_OUTPUT"
+          echo "AZURE_WEBAPP_NAME=technight-webapi" >> "$GITHUB_OUTPUT"
           echo "RESOURCE_GROUP=TN-RG"               >> "$GITHUB_OUTPUT"
 
       - name: Set up .NET Core
@@ -52,18 +54,18 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build Web App
-        run: dotnet build ./TechNight-WebApp -c Release
+        run: dotnet build ./My-WebAPI/WebAPI -c Release
 
         #TODO: run unit tests on the web app
 
       - name: Publish Web App
-        run: dotnet publish ./TechNight-WebApp -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapp
+        run: dotnet publish ./My-WebAPI/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
 
       - name: Upload application's files for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: ${{ env.DOTNET_ROOT }}/technight-webapp
+          path: ${{ env.DOTNET_ROOT }}/technight-webapi
           if-no-files-found: error
 
       - name: Upload Bicep template for deployment job
