@@ -17,8 +17,11 @@ on:
       - 'My-WebAPI/**'
   workflow_dispatch:
 
+# Write permissions are the minimal required by the Publish Test Results action
+# https://github.com/EnricoMi/publish-unit-test-result-action#permissions
 permissions:
-  contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
   build:
