@@ -72,9 +72,9 @@ jobs:
         if: always()
         with:
           files: |
-            test-results/**/*.xml
-            test-results/**/*.trx
-            test-results/**/*.json        
+            My-WebAPI/WebAPI/TestResults/**/*.xml
+            My-WebAPI/WebAPI/TestResults/**/*.trx
+            My-WebAPI/WebAPI/TestResults/**/*.json        
 
       - name: Publish Web App
         run: dotnet publish ./My-WebAPI/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
