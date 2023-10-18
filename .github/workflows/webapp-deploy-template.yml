@@ -25,7 +25,10 @@ on:
         default: 'F1'
       AZURE_WEBAPP_LINUXFXVERSION:
         type: string
-        default: 'DOTNETCORE|6.0' 
+        default: 'DOTNETCORE|6.0'
+      STARTUP_COMMAND:
+        type: string
+        default: ''
       LOCATION:
         type: string
         default: 'canadacentral'
@@ -81,6 +84,8 @@ jobs:
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
+        startup-command: 'dotnet WebApi.dll'
+        
 
     # Deploy Azure Web API    
 
