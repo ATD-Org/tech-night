@@ -84,7 +84,7 @@ jobs:
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
-        startup-command: 'dotnet WebApi.dll'
+        startup-command: ${{ inputs.STARTUP_COMMAND }}
         
 
     # Deploy Azure Web API    
