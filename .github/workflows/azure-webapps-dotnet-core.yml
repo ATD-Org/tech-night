@@ -16,6 +16,11 @@ on:
     paths:
       - 'My-WebAPI/**'
   workflow_dispatch:
+    inputs:
+      reason:
+        description: 'The reason for running the workflow'
+        required: true
+        default: 'Manual build from GitHub UI'
 
 # Write permissions are the minimal required by the Publish Test Results action
 # https://github.com/EnricoMi/publish-unit-test-result-action#permissions

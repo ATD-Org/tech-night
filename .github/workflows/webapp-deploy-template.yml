@@ -52,6 +52,7 @@ jobs:
       id: download
       with:
         name: artifacts
+        path: artifacts
 
     # Log into Azure
     - name: Log into Azure
@@ -80,7 +81,9 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
-        package: ${{steps.download.outputs.download-path}}
+        package: artifacts
+
+    # Deploy Azure Web API    
 
     - name: Log out of Azure
       run: az logout
