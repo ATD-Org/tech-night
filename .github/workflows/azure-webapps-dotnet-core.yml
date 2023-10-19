@@ -72,9 +72,9 @@ jobs:
         if: always()
         with:
           files: |
-            *.xml
-            *.trx
-            *.json        
+            ./My-WebAPI/**/*.xml
+            ./My-WebAPI/**/*.trx
+            ./My-WebAPI/**/*.json        
 
       - name: Publish Web App
         run: dotnet publish ./My-WebAPI/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
@@ -103,7 +103,7 @@ jobs:
       ENVIRONMENT: DEVELOPMENT
       AZURE_WEBAPP_NAME: ${{ needs.build.outputs.AZURE_WEBAPP_NAME }}
       RESOURCE_GROUP: ${{ needs.build.outputs.RESOURCE_GROUP }}
-      #STARTUP_COMMAND: "dotnet run WebAPI.dll"
+      STARTUP_COMMAND: "dotnet run WebAPI.dll"
     secrets: inherit
 
   prd:
@@ -116,6 +116,6 @@ jobs:
         ENVIRONMENT: PRODUCTION
         AZURE_WEBAPP_NAME: ${{ needs.build.outputs.AZURE_WEBAPP_NAME }}
         RESOURCE_GROUP: ${{ needs.build.outputs.RESOURCE_GROUP }}
-        #STARTUP_COMMAND: "dotnet run WebAPI.dll"
+        STARTUP_COMMAND: "dotnet run WebAPI.dll"
         AZURE_WEBAPP_SKU: B1
       secrets: inherit
