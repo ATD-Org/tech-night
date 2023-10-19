@@ -35,6 +35,9 @@ on:
       RESOURCE_GROUP:
         required: true
         type: string
+      DEPLOYMENT_MODE:
+        type: string
+        default: 'Incremental'
     secrets:
       AZURE_CREDENTIALS:
         required: true
@@ -68,7 +71,7 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
         resourceGroupName: '${{ inputs.ENVIRONMENT_PREFIX }}-${{inputs.RESOURCE_GROUP}}'
-        deploymentMode: 'Incremental'
+        deploymentMode: '${{ inputs.DEPLOYMENT_MODE }}'
         template: 'azuredeploy.bicep'
         parameters: > 
           envPrefix=${{ inputs.ENVIRONMENT_PREFIX }} 
@@ -84,10 +87,7 @@ jobs:
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
-        startup-command: ${{ inputs.STARTUP_COMMAND }}
-        
-
-    # Deploy Azure Web API    
+        startup-command: ${{ inputs.STARTUP_COMMAND }}  
 
     - name: Log out of Azure
       run: az logout

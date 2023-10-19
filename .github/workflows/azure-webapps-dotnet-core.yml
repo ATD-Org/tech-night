@@ -1,11 +1,11 @@
 ###############################################################################
 # Author: Alain Tran-Dang
-# Name: TechNight-WebApp-CICD (Workflow)
+# Name: TechNight-WebAPI-CICD (Workflow)
 #
-# Workflow used to package, deploy, and configure the TechNight-WebApp
+# Workflow used to package, deploy, and configure the TechNight-WebAPI
 ###############################################################################
 
-name: TechNight-WebApp-CICD
+name: TechNight-WebAPI-CICD
 
 env:
   DOTNET_VERSION: '6.0'
@@ -53,19 +53,11 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
       - name: Build Web App
         run: dotnet build ./My-WebAPI/WebAPI -c Release
 
       - name: Run Unit Tests
-        run: dotnet test ./My-WebAPI/WebAPI.Tests -c Release
+        run: dotnet test ./My-WebAPI/WebAPI.Tests -c Release --logger "trx;LogFileName=testresults.trx"
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
