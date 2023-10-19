@@ -9,6 +9,7 @@ name: TechNight-WebAPI-CICD
 
 env:
   DOTNET_VERSION: '6.0'
+  WEBAPP_BASE_PATH: 'My-WebAPI'
 
 on:
   push:
@@ -54,22 +55,22 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build Web App
-        run: dotnet build ./My-WebAPI/WebAPI -c Release
+        run: dotnet build ${{ env.WEBAPP_BASE_PATH }}/WebAPI -c Release
 
       - name: Run Unit Tests
-        run: dotnet test ./My-WebAPI/WebAPI.Tests -c Release --logger "trx;LogFileName=testresults.trx"
+        run: dotnet test ${{ env.WEBAPP_BASE_PATH }}/WebAPI -c Release --logger "trx;LogFileName=testresults.trx"
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            ./My-WebAPI/**/*.xml
-            ./My-WebAPI/**/*.trx
-            ./My-WebAPI/**/*.json        
+            ${{ env.WEBAPP_BASE_PATH }}/**/*.xml
+            ${{ env.WEBAPP_BASE_PATH }}/**/*.trx
+            ${{ env.WEBAPP_BASE_PATH }}/**/*.json        
 
       - name: Publish Web App
-        run: dotnet publish ./My-WebAPI/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
+        run: dotnet publish ${{ env.WEBAPP_BASE_PATH }}/WebAPI -c Release -o ${{ env.DOTNET_ROOT }}/technight-webapi
 
       - name: Upload application's files for deployment job
         uses: actions/upload-artifact@v3
