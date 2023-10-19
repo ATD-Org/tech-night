@@ -87,7 +87,7 @@ jobs:
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
-        startup-command: ${{ inputs.STARTUP_COMMAND }}  
+        startup-command: ${{ inputs.STARTUP_COMMAND }}
 
     - name: Log out of Azure
       run: az logout
