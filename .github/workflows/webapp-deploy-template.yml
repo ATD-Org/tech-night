@@ -43,6 +43,10 @@ on:
         required: true
       AZURE_SUBSCRIPTIONID:
         required: true
+      APP_SETTINGS:
+        required: false
+      CONNECTION_STRINGS:
+        required: false
 
 jobs:
   deploy:
@@ -59,13 +63,11 @@ jobs:
       with:
         name: artifacts
 
-    # Log into Azure
     - name: Log into Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Deploy Bicep file
     - name: Deploy Bicep Template (Web App Infra)
       uses: azure/arm-deploy@v1
       with:
@@ -81,13 +83,20 @@ jobs:
           location=${{ inputs.LOCATION }}
         failOnStdErr: false
 
-    # Deploy to Azure Web apps
     - name: 'Deploy Web App'
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         package: ${{steps.download.outputs.download-path}}
         startup-command: ${{ inputs.STARTUP_COMMAND }}
+
+    - name: Configure App Settings
+      uses: azure/appservice-settings@v1
+      with:
+        app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
+        app-settings-json: '${{ secrets.APP_SETTINGS }}' 
+        connection-strings-json: '${{ secrets.CONNECTION_STRINGS }}'
+        #general-settings-json: '{"alwaysOn": "false", "webSocketsEnabled": "true"}' #'General configuration settings as Key Value pairs'
 
     - name: Log out of Azure
       run: az logout
