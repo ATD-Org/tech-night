@@ -95,7 +95,7 @@ jobs:
       with:
         app-name: ${{ inputs.ENVIRONMENT_PREFIX }}-${{ inputs.AZURE_WEBAPP_NAME }}
         app-settings-json: '${{ secrets.APP_SETTINGS }}' 
-        connection-strings-json: '${{ secrets.CONNECTION_STRINGS }}'
+        #connection-strings-json: '${{ secrets.CONNECTION_STRINGS }}'
         #general-settings-json: '{"alwaysOn": "false", "webSocketsEnabled": "true"}' #'General configuration settings as Key Value pairs'
 
     - name: Log out of Azure
