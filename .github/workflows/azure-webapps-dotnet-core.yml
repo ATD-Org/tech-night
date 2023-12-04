@@ -50,7 +50,7 @@ jobs:
           echo "RESOURCE_GROUP=TN-RG"               >> "$GITHUB_OUTPUT"
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
